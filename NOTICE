@@ -1,0 +1,8 @@
+This distribution includes an Arazzo 1.0.1 schema from Jentic's arazzo-engine,
+commit ba7f19e5d40693a433f48df41a914789584ec293, under Apache License 2.0.
+The source URLs and SHA-256 hashes are recorded in references/third-party-sources.json.
+The schema is distributed without modification. Its license is in licenses/.
+The ItPay package metadata schema was authored for this integration and is
+separately marked MIT in its $comment.
+
+Upstream attribution notice: licenses/ARAZZO-SCHEMA-NOTICE.txt

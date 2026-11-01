@@ -1,0 +1,10 @@
+[project]
+name = "itpay-api-to-arazzo"
+version = "0.1.0"
+description = "Offline preparation and validation of ItPay Arazzo API packages"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = ["jsonschema==4.26.0", "PyYAML==6.0.3"]
+
+[tool.uv]
+package = false

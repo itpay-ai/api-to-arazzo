@@ -1,0 +1,392 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.itpay.ai/hub/v1/api-package.schema.json",
+  "$comment": "SPDX-License-Identifier: MIT. Authoring metadata is private proposed configuration, not execution, credential, pricing or publication authority. Drafts must not invent consent. Submission additionally validates source bindings, decoded icon bytes, credential ownership and prepaid minimum >= per-call amount.",
+  "$defs": {
+    "Authoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": "itpay.api-package.v1"
+        },
+        "service": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "service_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$",
+              "minLength": 3,
+              "maxLength": 64
+            },
+            "public_name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "icon": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "media_type": {
+                  "enum": [
+                    "image/png",
+                    "image/jpeg"
+                  ]
+                },
+                "data_base64": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 699052
+                }
+              },
+              "required": [
+                "media_type",
+                "data_base64"
+              ]
+            }
+          },
+          "required": [
+            "service_id",
+            "public_name"
+          ]
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "enum": [
+                "file",
+                "url",
+                "library"
+              ]
+            },
+            "documentation_url": {
+              "type": "string",
+              "maxLength": 2048,
+              "pattern": "^https://"
+            },
+            "library_api_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "uniqueItems": true,
+              "maxItems": 1000
+            }
+          },
+          "required": [
+            "mode",
+            "library_api_ids"
+          ]
+        },
+        "credentials": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "source": {
+              "enum": [
+                "own",
+                "itpay_hosted"
+              ]
+            },
+            "credential_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "uniqueItems": true,
+              "maxItems": 32
+            },
+            "required_keys": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "uniqueItems": true,
+              "maxItems": 100
+            }
+          },
+          "required": [
+            "source",
+            "credential_ids",
+            "required_keys"
+          ]
+        },
+        "operations": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "source_path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "operation_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "selected": {
+                "type": "boolean"
+              },
+              "test_input": {
+                "type": "object",
+                "maxProperties": 1000,
+                "additionalProperties": true
+              }
+            },
+            "required": [
+              "source_path",
+              "operation_id",
+              "selected",
+              "test_input"
+            ]
+          }
+        },
+        "workflow": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "instruction": {
+              "type": "string",
+              "maxLength": 16384
+            },
+            "version_name": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "test_input": {
+              "type": "object",
+              "maxProperties": 1000,
+              "additionalProperties": true
+            },
+            "selected_sources": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "uniqueItems": true,
+              "maxItems": 32
+            }
+          },
+          "required": [
+            "instruction",
+            "version_name",
+            "test_input",
+            "selected_sources"
+          ]
+        },
+        "pricing": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "billing_mode": {
+              "enum": [
+                "free",
+                "per_call",
+                "dynamic",
+                "prepaid"
+              ]
+            },
+            "currency": {
+              "enum": [
+                "CNY",
+                "USD"
+              ]
+            },
+            "amount_minor": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "minimum_top_up_minor": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "quote_node_id": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "checkout_details": {
+              "enum": [
+                "",
+                "rail_passengers"
+              ]
+            }
+          },
+          "required": [
+            "billing_mode",
+            "currency"
+          ],
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "billing_mode": {
+                    "const": "free"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "amount_minor": {
+                    "const": 0
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "billing_mode": {
+                    "enum": [
+                      "per_call",
+                      "prepaid"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "amount_minor"
+                ],
+                "properties": {
+                  "amount_minor": {
+                    "minimum": 1
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "billing_mode": {
+                    "const": "prepaid"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "minimum_top_up_minor"
+                ],
+                "properties": {
+                  "minimum_top_up_minor": {
+                    "minimum": 1
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "billing_mode": {
+                    "const": "dynamic"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "quote_node_id"
+                ],
+                "properties": {
+                  "quote_node_id": {
+                    "minLength": 1
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "required": [
+                  "checkout_details"
+                ],
+                "properties": {
+                  "checkout_details": {
+                    "const": "rail_passengers"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "billing_mode": {
+                    "const": "dynamic"
+                  },
+                  "currency": {
+                    "const": "CNY"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "confirmations": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 3,
+          "items": {
+            "enum": [
+              "terms",
+              "service_rights",
+              "pricing_refunds"
+            ]
+          }
+        },
+        "terms_version": {
+          "const": "2026-06-12"
+        }
+      },
+      "required": [
+        "version",
+        "service",
+        "source",
+        "credentials",
+        "operations",
+        "workflow",
+        "pricing",
+        "terms_version"
+      ]
+    },
+    "AuthoringSubmission": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Authoring"
+        },
+        {
+          "required": [
+            "confirmations"
+          ],
+          "properties": {
+            "confirmations": {
+              "type": "array",
+              "uniqueItems": true,
+              "maxItems": 3,
+              "items": {
+                "enum": [
+                  "terms",
+                  "service_rights",
+                  "pricing_refunds"
+                ]
+              },
+              "minItems": 3
+            }
+          }
+        }
+      ]
+    }
+  }
+}

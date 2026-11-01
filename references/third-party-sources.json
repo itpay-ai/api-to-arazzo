@@ -1,0 +1,20 @@
+[
+  {
+    "path": "references/arazzo-1.0.1.schema.yaml",
+    "url": "https://raw.githubusercontent.com/jentic/arazzo-engine/ba7f19e5d40693a433f48df41a914789584ec293/generator/arazzo_generator/validator/arazzo_schema/1.0.1/arazzo-schema.yaml",
+    "sha256": "5008de1e990ec72e1facda67cb1544280213bd0e51c6bbd8e7c9ab011a829476",
+    "license": "Apache-2.0"
+  },
+  {
+    "path": "licenses/ARAZZO-SCHEMA-APACHE-2.0.txt",
+    "url": "https://raw.githubusercontent.com/jentic/arazzo-engine/ba7f19e5d40693a433f48df41a914789584ec293/LICENSE",
+    "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+    "license": "Apache-2.0"
+  },
+  {
+    "path": "licenses/ARAZZO-SCHEMA-NOTICE.txt",
+    "url": "https://raw.githubusercontent.com/jentic/arazzo-engine/ba7f19e5d40693a433f48df41a914789584ec293/NOTICE",
+    "sha256": "bf0baf4b68536079b7dbddf483202127c2ecbf8233b59f704afbbc118852bc4d",
+    "license": "Apache-2.0"
+  }
+]

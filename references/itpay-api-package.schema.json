@@ -387,6 +387,215 @@
           }
         }
       ]
+    },
+    "BYOKAuthoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": "itpay.byok-package.v1"
+        },
+        "service": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "service_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$",
+              "minLength": 3,
+              "maxLength": 64
+            },
+            "public_name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "icon": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "media_type": {
+                  "enum": [
+                    "image/png",
+                    "image/jpeg"
+                  ]
+                },
+                "data_base64": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 699052
+                }
+              },
+              "required": [
+                "media_type",
+                "data_base64"
+              ]
+            }
+          },
+          "required": [
+            "service_id",
+            "public_name"
+          ]
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "enum": [
+                "file",
+                "url",
+                "library"
+              ]
+            },
+            "documentation_url": {
+              "type": "string",
+              "maxLength": 2048,
+              "pattern": "^https://"
+            },
+            "library_api_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "uniqueItems": true,
+              "maxItems": 1000
+            }
+          },
+          "required": [
+            "mode",
+            "library_api_ids"
+          ]
+        },
+        "credentials": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "source": {
+              "const": "own"
+            },
+            "credential_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "uniqueItems": true,
+              "maxItems": 32
+            },
+            "required_keys": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "uniqueItems": true,
+              "maxItems": 100
+            }
+          },
+          "required": [
+            "source",
+            "credential_ids",
+            "required_keys"
+          ]
+        },
+        "operations": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "source_path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "operation_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "selected": {
+                "type": "boolean"
+              },
+              "test_input": {
+                "type": "object",
+                "maxProperties": 1000,
+                "additionalProperties": true
+              }
+            },
+            "required": [
+              "source_path",
+              "operation_id",
+              "selected",
+              "test_input"
+            ]
+          }
+        },
+        "terms_version": {
+          "const": "2026-06-12"
+        },
+        "confirmations": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 2,
+          "items": {
+            "enum": [
+              "terms",
+              "api_rights"
+            ]
+          }
+        }
+      },
+      "required": [
+        "version",
+        "service",
+        "source",
+        "credentials",
+        "operations",
+        "terms_version"
+      ]
+    },
+    "BYOKAuthoringSubmission": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BYOKAuthoring"
+        },
+        {
+          "required": [
+            "confirmations"
+          ],
+          "properties": {
+            "confirmations": {
+              "type": "array",
+              "uniqueItems": true,
+              "maxItems": 2,
+              "items": {
+                "enum": [
+                  "terms",
+                  "api_rights"
+                ]
+              },
+              "minItems": 2
+            }
+          }
+        }
+      ]
+    },
+    "StoredAuthoring": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AuthoringSubmission"
+        },
+        {
+          "$ref": "#/$defs/BYOKAuthoringSubmission"
+        }
+      ]
     }
   }
 }

@@ -1,4 +1,4 @@
 interface:
   display_name: "API to Arazzo"
-  short_description: "Prepare and validate ItPay API packages"
-  default_prompt: "Use $api-to-arazzo to turn my API into a validated ItPay Arazzo package for manual upload."
+  short_description: "Prepare private ItPay BYOK API imports"
+  default_prompt: "Use $api-to-arazzo to prepare my API for private ItPay My API use with my own key, validate locally, and provide files for manual import."

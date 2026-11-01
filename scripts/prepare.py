@@ -10,12 +10,12 @@ def prepare(source,out,key,sid,name):
     draft=authoring(key,sid,name,operations)
     from validate import check_schema, ROOT
     s=load(ROOT/'references/itpay-api-package.schema.json')
-    check_schema(draft,{'$defs':s['$defs'],'$ref':'#/$defs/Authoring'},'authoring_schema')
+    check_schema(draft,{'$defs':s['$defs'],'$ref':'#/$defs/BYOKAuthoring'},'authoring_schema')
     p=Path(out)
     if p.exists() and any(p.iterdir()): fail('output_not_empty')
     p.mkdir(parents=True,exist_ok=True)
     dump(p/'openapi.json',api); dump(p/'workflow.arazzo.json',workflow)
-    dump(p/'itpay-manifest.json',{'format':'itpay.api-package.v1','source_key':key,'revision':'','entry_path':'workflow.arazzo.json','authoring':draft})
+    dump(p/'itpay-manifest.json',{'format':'itpay.api-package.v1','source_key':key,'revision':'','entry_path':'openapi.json','authoring':draft})
     report=validate(p); dump(p/'validation-report.json',report)
     return report
 

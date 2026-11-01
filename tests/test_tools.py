@@ -15,7 +15,11 @@ class ToolsTests(unittest.TestCase):
             prepare(src,out,'inventory','inventory','Inventory')
             self.assertEqual(load(out/'openapi.json'),self.api)
             self.assertEqual(load(out/'itpay-manifest.json')['authoring']['confirmations'],[])
-            self.assertEqual(load(out/'itpay-manifest.json')['authoring']['workflow']['selected_sources'],['openapi.json'])
+            self.assertEqual(load(out/'itpay-manifest.json')['entry_path'],'openapi.json')
+            self.assertEqual(load(out/'itpay-manifest.json')['authoring']['version'],'itpay.byok-package.v1')
+            self.assertEqual(set(load(out/'itpay-manifest.json')['authoring']),{'version','service','source','credentials','operations','terms_version','confirmations'})
+            self.assertNotIn('workflow',load(out/'itpay-manifest.json')['authoring'])
+            self.assertNotIn('pricing',load(out/'itpay-manifest.json')['authoring'])
             self.assertTrue(validate(out)['ok'])
             f=load(out/'workflow.arazzo.json'); f['workflows'][0]['steps'][0]['parameters']=[]; dump(out/'workflow.arazzo.json',f)
             with self.assertRaises(Blocked): validate(out)
@@ -60,13 +64,19 @@ class ToolsTests(unittest.TestCase):
             w['steps'][0]['outputs']={'id':'$response.body#/id'}
             second=copy.deepcopy(w['steps'][0]); second['stepId']='second'; second.pop('outputs'); second['parameters'][0]['value']='$steps.call.outputs.id'; w['steps'].append(second)
             dump(out/'workflow.arazzo.json',flow)
-            m=load(out/'itpay-manifest.json'); a=m['authoring']; a['pricing']={'billing_mode':'per_call','currency':'USD','amount_minor':5}; a['credentials']['credential_ids']=['my-reference']; a['service']['icon']={'media_type':'image/png','data_base64':'AAAA'}; dump(out/'itpay-manifest.json',m)
+            m=load(out/'itpay-manifest.json'); a=m['authoring']; a['credentials']['credential_ids']=['my-reference']; a['service']['icon']={'media_type':'image/png','data_base64':'AAAA'}; dump(out/'itpay-manifest.json',m)
             self.assertTrue(validate(out)['ok'])
             w['inputs']['properties'][next(iter(w['inputs']['properties']))]['type']='string'; dump(out/'workflow.arazzo.json',flow)
             with self.assertRaises(Blocked): validate(out)
     def test_local_ref_cycle(self):
         self.api['components']={'schemas':{'A':{'$ref':'#/components/schemas/A'}}}
         with self.assertRaises(Blocked): convert(self.api,'inventory')
+    def test_byok_rejects_commercial_and_workflow_authoring(self):
+        for field,value in [('pricing',{'billing_mode':'free','currency':'CNY'}),('workflow',{}),('credentials',{'source':'itpay_hosted','credential_ids':[],'required_keys':[]}),('confirmations',['terms','api_rights'])]:
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as t:
+                src=Path(t)/'src.json'; dump(src,self.api); out=Path(t)/'out'; prepare(src,out,'inventory','inventory','Inventory')
+                m=load(out/'itpay-manifest.json'); m['authoring'][field]=value; dump(out/'itpay-manifest.json',m)
+                with self.assertRaises(Blocked): validate(out)
     def test_hostile_parsers(self):
         for text,suffix in [('{"x":1,"x":2}','json'),('{"x":NaN}','json'),('x: &x [1]\ny: *x','yaml'),('x: !!str 1','yaml')]:
             with tempfile.TemporaryDirectory() as t:

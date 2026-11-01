@@ -1,7 +1,7 @@
 {
   "repository": "https://github.com/itpay-ai/itpay-api-hub",
-  "source_commit": "b524086e14ee6e0616b8d97a14cac71f3b943234",
+  "source_commit": "d2462545baaa15f9ed7cd796733e253e57ad2be2",
   "path": "contracts/jsonschema/api-package.schema.json",
-  "sha256": "2e958eda25ccaf5d7b294e5db3e1b7fe6ebb6f4a21610130b8f3b01037880353",
+  "sha256": "33fc4392768a56316a6a882768442928aa76e7ec8cb396510dfcd165c928bf17",
   "license": "MIT (per-file declaration)"
 }

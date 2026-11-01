@@ -153,4 +153,4 @@ def convert(api, source_key):
 
 def authoring(key,sid,name,operations):
     fence({'service_id':sid,'public_name':name})
-    return {'version':'itpay.api-package.v1','service':{'service_id':sid,'public_name':name},'source':{'mode':'file','library_api_ids':[]},'credentials':{'source':'own','credential_ids':[],'required_keys':[]},'operations':operations,'workflow':{'instruction':'Offline draft; supply and review test inputs on the website. No requests were executed.','version_name':'draft','test_input':{},'selected_sources':['openapi.json']},'pricing':{'billing_mode':'free','currency':'CNY','amount_minor':0},'confirmations':[],'terms_version':'2026-06-12'}
+    return {'version':'itpay.byok-package.v1','service':{'service_id':sid,'public_name':name},'source':{'mode':'file','library_api_ids':[]},'credentials':{'source':'own','credential_ids':[],'required_keys':[]},'operations':operations,'confirmations':[],'terms_version':'2026-06-12'}

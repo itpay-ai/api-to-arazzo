@@ -5,7 +5,7 @@ description: Prepare an API for private ItPay My API import with the user's own 
 
 # API to Arazzo
 
-Prepare a reviewable local package for the user's private **My API** use with their own key. Read [the package contract](references/itpay-format.md). This Skill has no workflow configuration step and creates no pricing, hosted credential, resale, refund or publication proposal. Arazzo is an internal specification artifact.
+Prepare a reviewable local package for the user's private **My API** use with their own key. Read the [public private-package specification](https://dev.itpay.ai/developers/my-api-package.txt) and [local format notes](references/itpay-format.md). This Skill has no workflow configuration step and creates no pricing, hosted credential, resale, refund or publication proposal. Arazzo is an internal specification artifact.
 
 ## Prepare
 
@@ -16,7 +16,7 @@ Prepare a reviewable local package for the user's private **My API** use with th
    uv run python scripts/prepare.py --openapi /path/to/openapi.yaml --out /path/to/new-package --source-key my-api --service-id my-api --name 'My API'
    ```
 
-   The helper preserves the OpenAPI snapshot and creates standard Arazzo internally. Unsupported features fail explicitly; do not remove constraints to make validation pass.
+   The helper preserves the OpenAPI snapshot and creates standard Arazzo internally. Only one header/query API key or HTTP bearer scheme is supported. OAuth2, HTTP basic and combined/alternative authentication fail locally; never erase security to make validation pass. Other unsupported features fail explicitly.
 3. Review `itpay-manifest.json`: API identity, source attribution, operation selection and test inputs, and references to the user's own credentials. Never place credential values in files, examples, commands or chat. Authoring version must be `itpay.byok-package.v1`; retain `credentials.source: own` and `confirmations: []`. Do not add workflow authoring, pricing or commercial configuration. The website separately asks the uploader to confirm **terms** and **API rights**; this Skill cannot accept either.
 4. Run `uv run python scripts/validate.py /path/to/new-package`. Report unsupported constructs and missing test inputs. Validation runs locally and proves only the stated offline checks, never execution, credential access or acceptance by the server.
 

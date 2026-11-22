@@ -527,6 +527,9 @@
                 "type": "object",
                 "maxProperties": 1000,
                 "additionalProperties": true
+              },
+              "effect_class": {
+                "const": "read_only"
               }
             },
             "required": [

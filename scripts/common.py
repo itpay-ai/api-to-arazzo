@@ -119,6 +119,12 @@ def convert(api, source_key):
             if method in ('parameters','summary','description') or method.startswith('x-'): continue
             if method not in ('get','post','put','patch','delete'): fail('unsupported_method')
             if 'servers' in op or 'callbacks' in op: fail('operation_feature_unsupported')
+            auth=op.get('security',api.get('security',[]))
+            if auth:
+                if not isinstance(auth,list) or len(auth)!=1 or not isinstance(auth[0],dict) or len(auth[0])!=1: fail('single_authentication_scheme_required')
+                scheme=api.get('components',{}).get('securitySchemes',{}).get(next(iter(auth[0])),{})
+                if not (scheme.get('type')=='http' and scheme.get('scheme')=='bearer' or scheme.get('type')=='apiKey' and scheme.get('in') in ('header','query')): fail('use_header_query_api_key_or_bearer')
+                if scheme.get('type')=='apiKey' and (not isinstance(scheme.get('name'),str) or not scheme['name'] or re.search(r'[\s:]',scheme['name'])): fail('invalid_authentication_name')
             oid=op.get('operationId')
             if not isinstance(oid,str) or not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_-]{0,199}',oid) or oid in ids: fail('unique_operation_id_required')
             ids.add(oid)

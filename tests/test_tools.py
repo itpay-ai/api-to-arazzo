@@ -71,6 +71,13 @@ class ToolsTests(unittest.TestCase):
     def test_local_ref_cycle(self):
         self.api['components']={'schemas':{'A':{'$ref':'#/components/schemas/A'}}}
         with self.assertRaises(Blocked): convert(self.api,'inventory')
+    def test_private_auth_matches_server_supported_schemes(self):
+        for scheme in ({'type':'apiKey','in':'header','name':'X-Api-Key'}, {'type':'apiKey','in':'query','name':'key'}, {'type':'http','scheme':'bearer'}):
+            api=copy.deepcopy(self.api);api['components']={'securitySchemes':{'owner':scheme}};api['security']=[{'owner':[]}]
+            convert(api,'inventory')
+        for scheme,security in [({'type':'oauth2','flows':{}},[{'owner':[]}]),({'type':'http','scheme':'basic'},[{'owner':[]}]),({'type':'apiKey','in':'header','name':'X-Key'},[{'owner':[]},{'other':[]}]),({'type':'apiKey','in':'header','name':'X-Key'},[{'owner':[],'other':[]}])]:
+            api=copy.deepcopy(self.api);api['components']={'securitySchemes':{'owner':scheme}};api['security']=security
+            with self.assertRaises(Blocked):convert(api,'inventory')
     def test_byok_rejects_commercial_and_workflow_authoring(self):
         for field,value in [('pricing',{'billing_mode':'free','currency':'CNY'}),('workflow',{}),('credentials',{'source':'itpay_hosted','credential_ids':[],'required_keys':[]}),('confirmations',['terms','api_rights'])]:
             with self.subTest(field=field), tempfile.TemporaryDirectory() as t:
